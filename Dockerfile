@@ -1,9 +1,9 @@
 FROM alpine:3.24
 
 # Keep this list architecture-neutral so the same Dockerfile builds for
-# linux/arm/v6, linux/arm/v7, linux/386, and linux/amd64.  The driver packages
-# cover common PostScript/PCL, Canon, Epson, HP, Brother, and Samsung printers
-# without installing proprietary, glibc-only vendor binaries.
+# linux/arm/v6, linux/arm/v7, linux/arm64, linux/386, and linux/amd64. The
+# driver packages cover common PostScript/PCL, Canon, Epson, HP, Brother, and
+# Samsung printers without installing proprietary, glibc-only vendor binaries.
 RUN apk add --no-cache \
         avahi \
         brlaser \

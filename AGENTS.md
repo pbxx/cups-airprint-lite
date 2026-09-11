@@ -5,14 +5,15 @@
 This repository builds a small CUPS print server that exposes physical USB
 printers to Apple AirPrint clients using CUPS DNS-SD announcements and Avahi.
 The primary deployment target is a 32-bit ARMv7 Raspberry Pi running Docker on
-Linux. Keep `linux/arm/v6`, `linux/arm/v7`, `linux/386`, and `linux/amd64`
-support working; do not introduce packages or binaries limited to only one of
-these architectures.
+Linux. Keep `linux/arm/v6`, `linux/arm/v7`, `linux/arm64`, `linux/386`, and
+`linux/amd64` support working; do not introduce packages or binaries limited
+to only one of these architectures.
 
 ## Runtime architecture
 
 - `Dockerfile` is based on the multi-architecture Alpine image. All installed
-  packages must exist for Alpine `armhf`, `armv7`, `x86`, and `x86_64`.
+  packages must exist for Alpine `armhf`, `armv7`, `aarch64`, `x86`, and
+  `x86_64`.
 - `compose.yaml` is the user-facing deployment file and defaults to
   `linux/arm/v7`; `DOCKER_PLATFORM` can select another supported platform.
 - Host networking is required so multicast DNS reaches the physical LAN with a

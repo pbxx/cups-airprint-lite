@@ -6,9 +6,9 @@ A lightweight Docker image that shares USB printers through CUPS and makes
 them discoverable by AirPrint clients on the local network.
 
 The image targets Raspberry Pi and other Linux hosts. Supported platforms are
-`linux/arm/v6`, `linux/arm/v7` (the default), `linux/386`, and `linux/amd64`.
-It includes CUPS, Avahi, common open-source printer drivers, and persistent
-storage for printer configuration and queued jobs.
+`linux/arm/v6`, `linux/arm/v7` (the default), `linux/arm64`, `linux/386`, and
+`linux/amd64`. It includes CUPS, Avahi, common open-source printer drivers, and
+persistent storage for printer configuration and queued jobs.
 
 ## Quick start
 
@@ -34,7 +34,7 @@ The printer should now appear in the print dialogs on iOS, iPadOS, and macOS.
 To build for a different supported platform, set `DOCKER_PLATFORM`:
 
 ```sh
-DOCKER_PLATFORM=linux/amd64 docker compose up -d --build
+DOCKER_PLATFORM=linux/arm64 docker compose up -d --build
 ```
 
 ## Configuration notes
