@@ -1,0 +1,26 @@
+name: cups-airprint-lite
+
+services:
+  cups:
+    build: .
+    # ARMv7 remains the default. Override DOCKER_PLATFORM for another build,
+    # for example linux/arm/v6, linux/386, or linux/amd64.
+    platform: ${DOCKER_PLATFORM:-linux/arm/v7}
+    container_name: cups-airprint-lite
+    hostname: cups-airprint-lite
+    restart: unless-stopped
+
+    # AirPrint discovery uses multicast DNS. Host networking lets the
+    # advertisement reach the LAN and contain the host's usable address.
+    network_mode: host
+
+    # Required for USB device access and USB hotplug inside the container.
+    privileged: true
+    volumes:
+      - /dev/bus/usb:/dev/bus/usb
+      # Persistent directories for CUPS config and spool
+      - ./data/cups-config:/etc/cups
+      - ./data/cups-spool:/var/spool/cups
+    environment:
+      CUPS_ADMIN_USER: admin
+      CUPS_ADMIN_PASSWORD: change-me-to-a-strong-password
