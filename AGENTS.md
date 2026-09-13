@@ -14,8 +14,10 @@ to only one of these architectures.
 - `Dockerfile` is based on the multi-architecture Alpine image. All installed
   packages must exist for Alpine `armhf`, `armv7`, `aarch64`, `x86`, and
   `x86_64`.
-- `compose.yaml` is the user-facing deployment file and defaults to
-  `linux/arm/v7`; `DOCKER_PLATFORM` can select another supported platform.
+- `compose.yaml` is the user-facing deployment file and lets Docker select the
+  matching platform from the published multi-platform image.
+- `compose.dev.yaml` defaults local builds to `linux/arm/v7`;
+  `DOCKER_PLATFORM` can select another supported platform.
 - Host networking is required so multicast DNS reaches the physical LAN with a
   usable address. Do not replace it with ordinary port publishing unless the
   complete mDNS behavior is redesigned and tested.

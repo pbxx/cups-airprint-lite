@@ -1,5 +1,8 @@
 services:
   cups:
     image: cups-airprint-lite:dev
+    # ARMv7 is the primary development target. Override DOCKER_PLATFORM to
+    # build for linux/arm/v6, linux/arm64, linux/386, or linux/amd64.
+    platform: ${DOCKER_PLATFORM:-linux/arm/v7}
     build:
       context: .

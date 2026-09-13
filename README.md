@@ -39,12 +39,7 @@ networking and multicast DNS.
 
 The printer should now appear in the print dialogs on iOS, iPadOS, and macOS.
 
-The image defaults to ARMv7. To run another supported image variant, set
-`DOCKER_PLATFORM`:
-
-```sh
-DOCKER_PLATFORM=linux/arm64 docker compose up -d
-```
+Docker automatically pulls the image variant matching the host architecture.
 
 ## Local development
 
@@ -55,8 +50,8 @@ image from the local checkout instead of using the Docker Hub image:
 docker compose -f compose.yaml -f compose.dev.yaml up -d --build
 ```
 
-`DOCKER_PLATFORM` selects the local build platform in the same way. For
-example:
+Local development builds default to the project's primary ARMv7 target. Set
+`DOCKER_PLATFORM` to build for another supported platform. For example:
 
 ```sh
 DOCKER_PLATFORM=linux/amd64 docker compose -f compose.yaml -f compose.dev.yaml up -d --build
