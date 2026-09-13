@@ -37,12 +37,17 @@ printf '%s:%s\n' "$admin_user" "$admin_password" | chpasswd
 mkdir -p /run/cups /run/dbus /run/avahi-daemon /var/spool/cups /var/log/cups
 rm -f /run/cups/cupsd.pid /run/dbus/pid /run/avahi-daemon/pid
 
-# /etc/cups is persistent, so install the image-managed server configuration
-# and Alpine's packaged file/directory configuration on every start. The bind
-# mount otherwise hides cups-files.conf and the TLS keychain directory, which
-# makes CUPS advertise IPPS without being able to create a certificate.
-# Printer definitions and PPDs remain untouched in storage.
-install -m 0644 /usr/local/share/cups-container/cupsd.conf /etc/cups/cupsd.conf
+# /etc/cups is persistent. Seed the server configuration on first use, but
+# preserve it afterward so changes made through the CUPS web interface survive
+# container restarts and image upgrades.
+if [ ! -e /etc/cups/cupsd.conf ] && [ ! -L /etc/cups/cupsd.conf ]; then
+    echo "Installing the default CUPS server configuration..."
+    install -m 0644 /usr/local/share/cups-container/cupsd.conf /etc/cups/cupsd.conf
+fi
+
+# The bind mount hides Alpine's packaged cups-files.conf and TLS keychain
+# directory. Restore those image-managed prerequisites on every start; the
+# CUPS web interface does not manage cups-files.conf.
 install -m 0644 /usr/local/share/cups-container/cups-files.conf /etc/cups/cups-files.conf
 mkdir -p /etc/cups/ssl
 chown root:lp /etc/cups/ssl

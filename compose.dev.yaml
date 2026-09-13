@@ -1,0 +1,5 @@
+services:
+  cups:
+    image: cups-airprint-lite:dev
+    build:
+      context: .

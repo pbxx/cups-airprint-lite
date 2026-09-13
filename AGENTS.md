@@ -24,10 +24,10 @@ to only one of these architectures.
   required, and their output should remain visible through Compose logs.
 - `docker/cupsd.conf` explicitly publishes `_cups`, `_print`, and `_universal`
   DNS-SD subtypes. `_universal` is required for AirPrint discovery.
-- Printer definitions and PPDs persist in the `./data/cups-config` bind mount;
-  pending jobs persist in `./data/cups-spool`. The image-managed `cupsd.conf`
-  is copied into the configuration directory on every start so configuration
-  fixes reach existing installations.
+- Printer definitions, PPDs, and `cupsd.conf` persist in the
+  `./data/cups-config` bind mount; pending jobs persist in
+  `./data/cups-spool`. The image-managed `cupsd.conf` is copied into the
+  configuration directory only when no persisted file exists.
 
 ## Security and compatibility constraints
 
@@ -39,10 +39,11 @@ to only one of these architectures.
   password or replace the placeholder with a usable default credential.
 - Do not add `ipp-usb` without accounting for its exclusive ownership of some
   USB printer interfaces and its interaction with the CUPS USB backend.
-- Treat `docker/cupsd.conf` as image-managed. Do not remove the entrypoint copy
-  into `/etc/cups`: it prevents existing bind-mounted data from retaining a
-  stale server configuration. Web-UI edits to `cupsd.conf` are intentionally
-  not persistent; printer definitions and PPD files remain persistent.
+- Treat `docker/cupsd.conf` as the first-run default. Keep the conditional
+  entrypoint copy into `/etc/cups`, but do not overwrite an existing file:
+  web-UI and manual edits to the persisted `cupsd.conf` must survive restarts.
+  Document configuration changes that existing installations may need to
+  merge when upgrading.
 
 ## Validation
 
@@ -56,6 +57,7 @@ git diff --check
 ```
 
 An x86 development machine needs binfmt/QEMU configured to execute the ARMv7
-image. On the target Pi, normal `docker compose build` uses the native ARMv7
-platform. For runtime failures, capture `docker compose logs --tail=100 cups`;
-do not diagnose from the restart status alone.
+image. On the target Pi, the development Compose override builds the native
+ARMv7 platform. For runtime failures, capture
+`docker compose logs --tail=100 cups`; do not diagnose from the restart status
+alone.

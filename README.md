@@ -3,12 +3,20 @@
 # cups-airprint-lite
 
 A lightweight Docker image that shares USB printers through CUPS and makes
-them discoverable by AirPrint clients on the local network.
+them discoverable by IPP and AirPrint clients on the local network.
 
-The image targets Raspberry Pi and other Linux hosts. Supported platforms are
-`linux/arm/v6`, `linux/arm/v7` (the default), `linux/arm64`, `linux/386`, and
-`linux/amd64`. It includes CUPS, Avahi, common open-source printer drivers, and
+It includes CUPS, Avahi, common open-source printer drivers, and
 persistent storage for printer configuration and queued jobs.
+
+The image targets a wide variety of platforms, including the Raspberry Pi.
+
+| Platform       | Typical hardware                              |
+| -------------- | --------------------------------------------- |
+| `linux/arm/v6` | Raspberry Pi Zero/Zero W and first-generation Pi |
+| `linux/arm/v7` | Raspberry Pi 2/3 and other 32-bit ARM boards  |
+| `linux/arm64`  | 64-bit Raspberry Pi and other ARM64 boards    |
+| `linux/386`    | Older 32-bit Intel/AMD PCs                    |
+| `linux/amd64`  | Modern 64-bit Intel/AMD PCs and servers       |
 
 ## Quick start
 
@@ -22,7 +30,7 @@ networking and multicast DNS.
 
    ```sh
    mkdir -p data/cups-config data/cups-spool
-   docker compose up -d --build
+   docker compose up -d
    ```
 
 3. Open `http://<docker-host>:631/admin`, sign in with the credentials from
@@ -31,10 +39,27 @@ networking and multicast DNS.
 
 The printer should now appear in the print dialogs on iOS, iPadOS, and macOS.
 
-To build for a different supported platform, set `DOCKER_PLATFORM`:
+The image defaults to ARMv7. To run another supported image variant, set
+`DOCKER_PLATFORM`:
 
 ```sh
-DOCKER_PLATFORM=linux/arm64 docker compose up -d --build
+DOCKER_PLATFORM=linux/arm64 docker compose up -d
+```
+
+## Local development
+
+Use `compose.dev.yaml` together with the ready-to-run Compose file to build the
+image from the local checkout instead of using the Docker Hub image:
+
+```sh
+docker compose -f compose.yaml -f compose.dev.yaml up -d --build
+```
+
+`DOCKER_PLATFORM` selects the local build platform in the same way. For
+example:
+
+```sh
+DOCKER_PLATFORM=linux/amd64 docker compose -f compose.yaml -f compose.dev.yaml up -d --build
 ```
 
 ## Configuration notes
@@ -47,8 +72,10 @@ DOCKER_PLATFORM=linux/arm64 docker compose up -d --build
   Alternatively, set `CUPS_ADMIN_PASSWORD_FILE` in a secret-managed setup.
 - Printer definitions and PPDs persist in `data/cups-config`; pending jobs
   persist in `data/cups-spool`.
-- `docker/cupsd.conf` is image-managed and restored on every start. Edit it in
-  the repository and rebuild instead of changing it through the web UI.
+- On first start, a `docker/cupsd.conf` is copied to the persistent
+  `data/cups-config` directory if one isn't present already. Later changes made through the CUPS web UI or
+  directly in `data/cups-config/cupsd.conf` survive restarts and image upgrades.
+  file while the container is stopped so it is recreated on the next start.
 - Serial and parallel printers require their device node to be added to
   `compose.yaml`.
 

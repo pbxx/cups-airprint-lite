@@ -2,8 +2,8 @@ name: cups-airprint-lite
 
 services:
   cups:
-    build: .
-    # ARMv7 remains the default. Override DOCKER_PLATFORM for another build,
+    image: xpbxx/cups-airprint-lite:latest
+    # ARMv7 remains the default. Override DOCKER_PLATFORM for another platform,
     # for example linux/arm/v6, linux/arm64, linux/386, or linux/amd64.
     platform: ${DOCKER_PLATFORM:-linux/arm/v7}
     container_name: cups-airprint-lite
@@ -16,6 +16,12 @@ services:
 
     # Required for USB device access and USB hotplug inside the container.
     privileged: true
+
+    # Examples for non-USB devices. Host device names may differ.
+    # devices:
+      # - /dev/ttyUSB0:/dev/ttyUSB0 # USB-to-serial adapter
+      # - /dev/ttyS0:/dev/ttyS0     # Built-in serial port
+      # - /dev/lp0:/dev/lp0         # Parallel printer port
     volumes:
       - /dev/bus/usb:/dev/bus/usb
       # Persistent directories for CUPS config and spool
